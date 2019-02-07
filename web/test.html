@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<form action="ui/operations/rpa/update" enctype="multipart/form-data" method="post">
+    <div _ngcontent-c2="" class="box-body">
+
+        <div _ngcontent-c2="" class="form-group">
+            <label _ngcontent-c2="" class="center-block">Oid:
+                <input _ngcontent-c2="" class="form-control ng-untouched ng-pristine ng-invalid" name="oid" placeholder="Oid" type="text" ng-reflect-name="oid">
+
+                <!--bindings={
+"ng-reflect-ng-if": ""
+}-->
+            </label>
+        </div>
+
+
+        <div _ngcontent-c2="" class="form-group">
+            <label _ngcontent-c2="" class="center-block">Type:
+                <select _ngcontent-c2="" class="custom-select ng-untouched ng-pristine ng-invalid" name="type" ng-reflect-name="type">
+                    <!--bindings={
+"ng-reflect-ng-for-of": "MNO,SMDP,SMSR,EUM,CI"
+}--><option _ngcontent-c2="" value="MNO" ng-reflect-ng-value="MNO">
+                    MNO
+                </option><option _ngcontent-c2="" value="SMDP" ng-reflect-ng-value="SMDP">
+                    SMDP
+                </option><option _ngcontent-c2="" value="SMSR" ng-reflect-ng-value="SMSR">
+                    SMSR
+                </option><option _ngcontent-c2="" value="EUM" ng-reflect-ng-value="EUM">
+                    EUM
+                </option><option _ngcontent-c2="" value="CI" ng-reflect-ng-value="CI">
+                    CI
+                </option>
+                </select>
+
+                <!--bindings={
+"ng-reflect-ng-if": ""
+}-->
+            </label>
+        </div>
+
+        <div _ngcontent-c2="" class="form-group">
+            <label _ngcontent-c2="" class="center-block">Description:
+                <input _ngcontent-c2="" class="form-control ng-untouched ng-pristine ng-valid" name="description" placeholder="Description" type="text" ng-reflect-name="description">
+
+                <!--bindings={}-->
+            </label>
+        </div>
+
+        <label _ngcontent-c2="" class="center-block">esURLs:</label>
+        <div _ngcontent-c2="" class="well well-lg">
+
+            <div _ngcontent-c2="" class="form-group">
+                <label _ngcontent-c2="" class="center-block">es1URL:
+                    <input _ngcontent-c2="" class="form-control ng-untouched ng-pristine ng-valid" name="es1url"
+                           placeholder="es1Url" type="text" ng-reflect-name="es1Url">
+
+                    <!--bindings={}-->
+                </label>
+            </div>
+
+            <div _ngcontent-c2="" class="form-group">
+                <label _ngcontent-c2="" class="center-block">es2URL:
+                    <input _ngcontent-c2="" class="form-control ng-untouched ng-pristine ng-valid" name="es2url"
+                           placeholder="es2Url" type="text" ng-reflect-name="es2Url">
+
+                    <!--bindings={}-->
+                </label>
+            </div>
+
+            <div _ngcontent-c2="" class="form-group">
+                <label _ngcontent-c2="" class="center-block">es3URL:
+                    <input _ngcontent-c2="" class="form-control ng-untouched ng-pristine ng-valid" name="es3url"
+                           placeholder="es3Url" type="text" ng-reflect-name="es3Url">
+
+                    <!--bindings={}-->
+                </label>
+            </div>
+
+            <div _ngcontent-c2="" class="form-group">
+                <label _ngcontent-c2="" class="center-block">es4URL:
+                    <input _ngcontent-c2="" class="form-control ng-untouched ng-pristine ng-valid" name="es4url"
+                           placeholder="es4Url" type="text" ng-reflect-name="es4Url">
+
+                    <!--bindings={}-->
+                </label>
+            </div>
+
+            <div _ngcontent-c2="" class="form-group">
+                <label _ngcontent-c2="" class="center-block">es7URL:
+                    <input _ngcontent-c2="" class="form-control ng-untouched ng-pristine ng-valid" name="es7url"
+                           placeholder="es7Url" type="text" ng-reflect-name="es7Url">
+
+                    <!--bindings={}-->
+                </label>
+            </div>
+
+        </div>
+
+        <div _ngcontent-c2="" class="form-group">
+            <label _ngcontent-c2="" class="center-block">wsUserId:
+                <input _ngcontent-c2="" class="form-control ng-untouched ng-pristine ng-valid" name="wsuserId"
+                       placeholder="wsUserId" type="text" ng-reflect-name="wsUserId">
+
+                <!--bindings={}-->
+            </label>
+        </div>
+
+        <div _ngcontent-c2="" class="form-group">
+            <label _ngcontent-c2="" class="center-block">wsPassword:
+                <input _ngcontent-c2="" class="form-control ng-untouched ng-pristine ng-valid" name="wspassword"
+                       placeholder="wsPassword" type="text" ng-reflect-name="wsPassword">
+
+                <!--bindings={}-->
+            </label>
+        </div>
+
+        <div _ngcontent-c2="" class="checkbox">
+            <label _ngcontent-c2="" class="center-block">
+                <input _ngcontent-c2="" name="local" type="checkbox" ng-reflect-name="local" class="ng-untouched ng-pristine ng-valid">Local
+            </label>
+        </div>
+
+        <div _ngcontent-c2="" class="form-group">
+            <label _ngcontent-c2="" class="center-block">Outgoing Authentification Method:
+                <select name="authMethod" ng-reflect-name="outGoingAuthMethod">
+                    <!--bindings={
+"ng-reflect-ng-for-of": "USER,CERT"
+}--><option _ngcontent-c2="" value="USER" ng-reflect-ng-value="USER">
+                    USER
+                </option><option _ngcontent-c2="" value="CERT" ng-reflect-ng-value="CERT">
+                    CERT
+                </option>
+                </select>
+
+                <!--bindings={}-->
+            </label>
+        </div>
+
+        <div _ngcontent-c2="" class="form-group">
+            <label _ngcontent-c2="" class="center-block">Secure Message Certificate:
+                <input _ngcontent-c2="" class="form-control" placeholder="Upload file" type="file" name="secureMessagingCertificate">
+            </label>
+
+            <!--bindings={}-->
+        </div>
+
+        <div _ngcontent-c2="" class="form-group">
+            <label _ngcontent-c2="" class="center-block">Web Service Certificate:
+                <input _ngcontent-c2="" class="form-control" placeholder="Upload file" type="file" name="wsCertificate">
+            </label>
+
+            <!--bindings={}-->
+        </div>
+
+        <div _ngcontent-c2="" class="form-group">
+            <label _ngcontent-c2="" class="center-block">Web Service Private Key:
+                <input _ngcontent-c2="" class="form-control" placeholder="Upload file" type="file" name="wsPrivateKey">
+            </label>
+
+            <!--bindings={}-->
+        </div>
+
+        <div _ngcontent-c2="" class="form-group">
+            <label _ngcontent-c2="" class="center-block">ECCKeyParameterReference:
+                <input _ngcontent-c2="" class="form-control ng-untouched ng-pristine ng-valid" name="keyParamRef" placeholder="ECCKeyParameterReference" type="text" ng-reflect-name="ECCKeyParameterReference">
+
+                <!--bindings={
+"ng-reflect-ng-if": ""
+}-->
+            </label>
+        </div>
+
+        <div _ngcontent-c2="" class="form-group">
+            <label _ngcontent-c2="" class="center-block">AllowedIPs: <span _ngcontent-c2="" class="text-muted"><small _ngcontent-c2="">(Input as comma seperated list)</small></span>
+                <input _ngcontent-c2="" class="form-control ng-untouched ng-pristine ng-valid" name="allowedIPs" placeholder="IP#1,IP#2,..." type="text" ng-reflect-name="allowedIPs">
+
+                <!--bindings={}-->
+            </label>
+        </div>
+
+        <div _ngcontent-c2="" class="form-group">
+            <label _ngcontent-c2="" class="center-block">DeniedIPs: <span _ngcontent-c2="" class="text-muted"><small _ngcontent-c2="">(Input as comma seperated list)</small></span>
+                <input _ngcontent-c2="" class="form-control ng-untouched ng-pristine ng-valid" name="deniedIPs" placeholder="IP#1,IP#2,..." type="text" ng-reflect-name="deniedIPs">
+
+                <!--bindings={}-->
+            </label>
+        </div>
+
+        <div _ngcontent-c2="" class="box-footer">
+
+            <div _ngcontent-c2="" style="margin-top: 1em">
+                <button _ngcontent-c2="" class="btn btn-success" type="submit">Save</button> &nbsp;
+
+                <button _ngcontent-c2="" class="btn btn-default" type="button">Cancel</button> &nbsp;
+            </div>
+
+            <!--bindings={}-->
+        </div>
+
+
+        <!--bindings={
+"ng-reflect-ng-if": "false"
+}-->
+    </div>
+</form>
+</body>
+</html>

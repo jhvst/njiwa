@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+
+    <persistence-unit name="default" transaction-type="JTA">
+        <!--  <provider>org.hibernate.ejb.HibernatePersistence</provider> -->
+
+        <jta-data-source>java:/njiwa</jta-data-source>
+
+        <class>io.njiwa.sr.model.Eis</class>
+        <class>io.njiwa.sr.model.AuditTrail</class>
+        <class>io.njiwa.common.model.Certificate</class>
+        <class>io.njiwa.common.model.Key</class>
+        <class>io.njiwa.common.model.KeySet</class>
+        <class>io.njiwa.common.model.KeyComponent</class>
+        <class>io.njiwa.sr.model.Pol2Rule</class>
+        <class>io.njiwa.sr.model.ProfileInfo</class>
+        <class>io.njiwa.sr.model.SecurityDomain</class>
+        <class>io.njiwa.sr.model.SmSrTransaction</class>
+        <class>io.njiwa.sr.model.SmSrTransactionRequestId</class>
+        <class>io.njiwa.sr.model.DlrTracker</class>
+
+        <class>io.njiwa.common.model.RpaEntity</class>
+        <class>io.njiwa.sr.model.AsyncWebServiceResponses</class>
+
+        <class>io.njiwa.dp.model.ProfileData</class>
+        <class>io.njiwa.dp.model.ProfileTemplate</class>
+        <class>io.njiwa.dp.model.ISDP</class>
+        <class>io.njiwa.dp.model.Euicc</class>
+        <class>io.njiwa.dp.model.SmDpTransaction</class>
+        <class>io.njiwa.common.model.Group</class>
+        <class>io.njiwa.common.model.User</class>
+
+
+        <!-- <validation-mode>CALLBACK</validation-mode> -->
+        <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
+
+        <properties>
+            <!--   <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect"/> -->
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.transaction.jta.platform"
+                      value="org.hibernate.service.jta.platform.internal.JBossAppServerJtaPlatform"/>
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <property name="hibernate.cache.use_query_cache" value="false"/>
+            <property name="hibernate.cache.use_second_level_cache" value="false"/>
+            <!-- need this so we force usage of DB sequences -->
+            <!-- apparently above makes user-defined factories easier -->
+
+            <!-- <property name="javax.persistence.sql-load-script-source" value="update.sql"/> -->
+        </properties>
+
+
+    </persistence-unit>
+</persistence>

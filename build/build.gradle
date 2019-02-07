@@ -1,0 +1,55 @@
+version '0.7'
+
+apply plugin: 'war'
+sourceCompatibility = 1.8
+project.webAppDirName = '../web'
+repositories {
+    mavenCentral()
+}
+sourceSets {
+    main {
+        java {
+            srcDirs = ['../src']
+        }
+        resources {
+            srcDirs = ['../src']
+            excludes = ['io/**']
+        }
+    }
+
+}
+
+dependencies {
+    providedCompile "com.fasterxml.jackson:jackson-base:2.9.8"
+    providedCompile "com.fasterxml.jackson.core:jackson-annotations:2.9.8"
+    providedCompile "com.fasterxml.jackson.core:jackson-databind:2.9.8"
+    providedCompile "javax.annotation:javax.annotation-api:1.3.2"
+    providedCompile "javax.ejb:javax.ejb-api:3.2.2"
+    providedCompile "javax.enterprise.concurrent:javax.enterprise.concurrent-api:1.1"
+    providedCompile "javax.enterprise:cdi-api:1.2"
+    providedCompile "javax.persistence:javax.persistence-api:2.2"
+    providedCompile "javax.servlet:javax.servlet-api:4.0.1"
+    providedCompile "javax.transaction:javax.transaction-api:1.3"
+    providedCompile "javax.ws.rs:javax.ws.rs-api:2.1.1"
+    compile "commons-net:commons-net:3.6"
+    providedCompile "log4j:log4j:1.2.17"
+
+    compile "org.bouncycastle:bcpkix-jdk15on:1.52"
+    compile "org.bouncycastle:bcprov-jdk15on:1.52"
+    compile "org.bouncycastle:bcprov-ext-jdk15on:1.52"
+    providedCompile "org.hibernate:hibernate-core:5.4.1.Final"
+    providedCompile "org.hibernate.common:hibernate-commons-annotations:5.1.0.Final"
+    providedCompile "org.jboss.resteasy:resteasy-multipart-provider:4.0.0.Beta8"
+    compile "org.openmuc:jasn1:1.6.0"
+    compile "redis.clients:jedis:2.6.1"
+}
+
+war {
+    webInf {
+        from('../src/io') {
+            into('classes/io')
+            include '**/*.xml'
+        }
+    }
+
+}

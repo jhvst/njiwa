@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.1">
+
+    <deployment>
+
+        <exclusions>
+            <!-- Remove this one so HibernateProxy missing is not reported -->
+           <!-- <module name="org.hibernate"/> -->
+            <!-- <module name="org.antlr"/> -->
+          <!--  <module name="org.picketlink"/>  -->
+
+        </exclusions>
+        <dependencies>
+            <!-- We need the org.hibernate dependency to remove the noclassdef org.hibernate.proxy.HibernateProxy error when deploying. Don't ask.
+             - No we don't. Just remove the exclusion one above as well!
+            <module name="org.hibernate"/> -->
+         <!--  <module name="org.picketlink"/>
+          <module name="javax.ws.rs.api" export="true"/>
+
+-->
+          <!--  <module name="org.jboss.security.xacml" /> -->
+
+            <module name="org.dom4j"/>
+            <module name="io.njiwa"/>
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>
+

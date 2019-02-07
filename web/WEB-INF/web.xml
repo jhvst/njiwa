@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
+    <!-- We need this to secure the web service. Use HTTPS only. -->
+    <security-constraint>
+        <display-name>SecurityConstraint</display-name>
+        <web-resource-collection>
+            <web-resource-name>Secure Messaging Web Services</web-resource-name>
+            <url-pattern>/SMSR/*</url-pattern>
+            <url-pattern>/SMDP/*</url-pattern>
+            <http-method>POST</http-method>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <display-name>SecurityConstraint</display-name>
+        <web-resource-collection>
+            <web-resource-name>logon and logout</web-resource-name>
+            <url-pattern>/ui/auth/*</url-pattern>
+            <http-method>POST</http-method>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <!-- User must be logged on to use UI. Roles used are defined in the classes -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>UI</web-resource-name>
+            <url-pattern>/ui/operations/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+            <http-method>PUT</http-method>
+            <http-method>DELETE</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <description>Require Logon</description>
+            <role-name>*</role-name>
+        </auth-constraint>
+
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+
+        </user-data-constraint>
+    </security-constraint>
+    <context-param>
+        <param-name>resteasy.role.based.security</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <!-- We need these as keystore location, right? -->
+
+    <servlet>
+        <servlet-name>Initialiser</servlet-name>
+        <servlet-class>io.njiwa.common.ws.InitialiserServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+        <init-param>
+            <param-name>keyfile</param-name>
+            <param-value>keystore.server</param-value>
+        </init-param>
+        <init-param>
+            <param-name>keyfilepassword</param-name>
+            <param-value>test1234</param-value>
+        </init-param>
+        <init-param>
+            <param-name>privatekeypassword</param-name>
+            <param-value>test1234</param-value>
+        </init-param>
+        <init-param>
+            <param-name>privatekeyalias</param-name>
+            <param-value>sm-sr-auth-key</param-value>
+        </init-param>
+
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Initialiser</servlet-name>
+        <url-pattern>/InitServlet</url-pattern>
+    </servlet-mapping>
+    <security-role>
+        <role-name>User</role-name>
+    </security-role>
+
+
+</web-app>
