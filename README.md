@@ -11,7 +11,7 @@
   The diagram below is taken from the GSMA specification. It shows the main
   elements in the embedded SIM ecosystem.
 
-    ![RSP Architecture Elements](etc/arch.png)
+    <img alt="RSP Architecture Elements" src="etc/arch.png"></img>
  
   Currently Njiwa implements the SM-DP and SM-SR in the above architecture. 
 
@@ -48,12 +48,13 @@ certain resources needed to run Njiwa. Take note of the Wildfly/JBOSS home direc
   files *njiwa.settings* and *modules.xml* from the source sub-directory *etc/wildfly* into it. 
   These files are respectively the module registration and the server settings (for now very minimalist).
 * Create a basic security domain called *njiwa* in Wildfly, with authorization policy set to *PermitAll*. Your *security-domains* configurations in the Wildfly XML configuration file should have an entry like this:
-```<security-domain name="njiwa" cache-type="default">
+<pre>
+<security-domain name="njiwa" cache-type="default">
                     <authorization>
                         <policy-module code="PermitAll" flag="optional"/>
                     </authorization>
                 </security-domain>
-```
+</pre>
 * Create the database for Njiwa and then create the JTA JDBC data source in Wildfly that will enable
   Njiwa connect to the database. The JNDI name must be *java:/njiwa*. [Here is the documentation for doing this in Wildfly 10.x](https://docs.jboss.org/author/display/WFLY10/DataSource+configuration). 
 
