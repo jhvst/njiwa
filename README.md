@@ -50,10 +50,10 @@ certain resources needed to run Njiwa. Take note of the Wildfly/JBOSS home direc
 * Create a basic security domain called *njiwa* in Wildfly, with authorization policy set to *PermitAll*. Your *security-domains* configurations in the Wildfly XML configuration file should have an entry like this:
 ```
 <security-domain name="njiwa" cache-type="default">
-                    <authorization>
-                        <policy-module code="PermitAll" flag="optional"/>
-                    </authorization>
-                </security-domain>
+   <authorization>
+     <policy-module code="PermitAll" flag="optional"/>
+       </authorization>
+</security-domain>
 ```
 
 * Create the database for Njiwa and then create the JTA JDBC data source in Wildfly that will enable
