@@ -25,7 +25,6 @@
  your favourite Web Services container. The main requirements for developing with or running Njiwa are:
 
 * Java 8 (JDK/JRE 1.8) or better
-* [JPA 2.x/Hibernate](http://hibernate.org)
 * A relational SQL database (we use [PostgreSQL](http://www.postgresql.org))
 * [Redis](http://redis.io) is used for caching transactional data
 * [Gradle](https://gradle.org) is used as the build tool. 
