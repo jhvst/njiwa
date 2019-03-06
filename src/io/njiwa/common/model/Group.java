@@ -19,6 +19,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -46,13 +47,20 @@ public class Group {
     @Column
     private
     String description;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "group_roles")
     @Column(name = "role_name", columnDefinition = "TEXT NOT NULL")
     private Set<String> roles;
-    @ManyToMany(mappedBy = "groups",cascade = CascadeType.DETACH)
+
+    @ElementCollection
+    @CollectionTable(name="auth_user_groups", joinColumns = @JoinColumn(name="group_id"),
+    indexes = {
+        @Index(columnList = "group_id", name = "group_users_idx1")
+    })
+    @Column(name="group_user")
     private
-    Set<User> users;
+    Set<String> users;
 
     public Group() {
     }
@@ -104,12 +112,68 @@ public class Group {
         this.roles = roles;
     }
 
-    public Set<User> getUsers() {
+    public Set<String> getUsers() {
         return users;
     }
 
-    public void setUsers(Set<User> users) {
+    public void setUsers(Set<String> users) {
         this.users = users;
+    }
+
+    public void assignUser(String u)
+    {
+        Set<String> l = getUsers();
+        if (l == null) {
+            l = new HashSet<>();
+            setUsers(l);
+        }
+        l.add(u);
+    }
+
+    public static List<Group> userGroups(EntityManager em, String u)
+    {
+        return em.createQuery("from Group where :u MEMBER OF users", Group.class)
+                .setParameter("u",u)
+                .getResultList();
+    }
+
+    public static void removeAllUserGroup(EntityManager em, String userID) throws Exception {
+        // Look for all groups that have this user, remove the user from them.
+
+        List<Group> l = userGroups(em, userID);
+
+        for (Group g : l) {
+            Set<String> sl = g.getUsers();
+            if (sl  != null)
+                sl.remove(userID);
+        }
+    }
+
+    public static Set<String> userRoles(EntityManager em, String u) throws Exception {
+        Set<String> s = new HashSet<>();
+        List<Group> l = userGroups(em,u);
+        for (Group g: l) {
+            Set<String> r = g.getRoles();
+            s.addAll(r);
+        }
+        return s;
+    }
+
+    public static boolean hasRole(EntityManager em, String user, String role)
+    {
+        try {
+
+            List<Group> gl = userGroups(em,user);
+            for (Group g: gl) {
+                Set<String> l = g.getRoles();
+                if (l != null && l.contains(role))
+                    return true;
+            }
+
+        } catch (Exception ex) {
+
+        }
+        return false;
     }
 
     @Override
@@ -119,16 +183,6 @@ public class Group {
             return xg.getName().equals(getName());
         } catch (Exception ex) {
             return false;
-        }
-    }
-
-    @PreRemove
-    private void removeGroupsFromUsers() {
-        Set<User> ulist = getUsers();
-        try {
-            for (User u : ulist)
-                u.getGroups().remove(this);
-        } catch (Exception ex) {
         }
     }
 

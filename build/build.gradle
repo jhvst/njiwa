@@ -42,6 +42,8 @@ dependencies {
     providedCompile "org.jboss.resteasy:resteasy-multipart-provider:4.0.0.Beta8"
     compile "org.openmuc:jasn1:1.6.0"
     compile "redis.clients:jedis:2.6.1"
+    compile "org.picketlink:picketlink-deltaspike:2.7.0.Final"
+    compile "org.picketlink:picketlink-idm-simple-schema:2.7.0.Final"
 }
 
 war {

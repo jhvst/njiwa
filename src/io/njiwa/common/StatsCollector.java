@@ -207,17 +207,17 @@ public class StatsCollector {
 
         public synchronized double[] getFrequencies(int intervalSecs[]) {
             // Compute frequencies for events based on intervals (in secs) given
-            double[] frequences = new double[intervalSecs.length];
+            double[] frequencies = new double[intervalSecs.length];
             long secs = Calendar.getInstance().getTimeInMillis() / 1000; // Convert to seconds
             // sum events, then divide by interval size
             for (int i = 0; i < eventSlots.length; i++)
-                eventSlots[i].countIntervalEvents(intervalSecs, secs, frequences);
+                eventSlots[i].countIntervalEvents(intervalSecs, secs, frequencies);
 
             // Do averages
             for (int i = 0; i < intervalSecs.length; i++)
                 if (intervalSecs[i] > 0)
-                    frequences[i] /= intervalSecs[i];
-            return frequences;
+                    frequencies[i] /= intervalSecs[i];
+            return frequencies;
         }
 
         private class EventSlot {

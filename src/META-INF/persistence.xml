@@ -28,8 +28,24 @@
         <class>io.njiwa.dp.model.Euicc</class>
         <class>io.njiwa.dp.model.SmDpTransaction</class>
         <class>io.njiwa.common.model.Group</class>
-        <class>io.njiwa.common.model.User</class>
 
+
+        <class>org.picketlink.idm.jpa.model.sample.simple.PartitionTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.AccountTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.RelationshipTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.AttributedTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.AttributeTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.AbstractCredentialTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.X509CredentialTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.GroupTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.OTPCredentialTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.TokenCredentialTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.RoleTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.PasswordCredentialTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.RelationshipIdentityTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.IdentityTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.DigestCredentialTypeEntity</class>
+        <class>org.picketlink.idm.jpa.model.sample.simple.PermissionTypeEntity</class>
 
         <!-- <validation-mode>CALLBACK</validation-mode> -->
         <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>

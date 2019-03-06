@@ -14,11 +14,8 @@ package io.njiwa.common;
 
 import io.njiwa.common.model.RpaEntity;
 import io.njiwa.common.rest.types.ReportsData;
-import io.njiwa.common.model.Group;
-import io.njiwa.common.model.User;
 import io.njiwa.common.rest.types.ReportsInputColumnsData;
 import io.njiwa.common.rest.types.ReportsInputOrderData;
-import io.njiwa.common.rest.types.Roles;
 import io.njiwa.dp.pedefinitions.EUICCResponse;
 import io.njiwa.sr.model.Eis;
 import io.njiwa.sr.transports.Transport;
@@ -149,38 +146,6 @@ public class Test {
         thread.start();
     }
 
-    private void addUsersAndGroups(EntityManager em) {
-        final String gname = "Admin";
-        Group g = Group.getByName(em, gname);
-        if (g == null) {
-            g = new Group("Admin", new String[]{Roles.USER, Roles.SMDPAdmin, Roles
-                    .SMSRAdmin});
-            em.persist(g);
-        }
-
-        User u = User.find(em, "admin");
-
-        if (u == null) {
-            u = new User("admin", "Admin User", new Group[]{g}, "test");
-            em.persist(u);
-        }
-        u = User.find(em, "testuser");
-        if (u == null) {
-            u = new User("testuser", "Test User", new Group[]{}, "test");
-            em.persist(u);
-        }
-        // Make a simple group
-        g = Group.getByName(em, "TestUsers");
-        if (g == null) {
-            g = new Group("Testusers", new String[]{Roles.NONE});
-            em.persist(g);
-        }
-        Set<Group> gs = new HashSet<>();
-        gs.add(g);
-        u.setGroups(gs);
-        em.flush();
-    }
-
     private void testReportsQuery(EntityManager em) {
         final Set<String> allowedOutputFields = new HashSet<>(Arrays.asList(new String[]{"meid",
                 "eid",
@@ -292,7 +257,7 @@ public class Test {
 
                     try {
                         testEventsRecording(em);
-                        //  addUsersAndGroups(em);
+                       // addUsersAndGroups(em);
                         //  testReportsQuery(em);
                         EUICCResponse resp = new EUICCResponse();
                         resp.decode(new ByteArrayInputStream(new byte[]{0x30, 0x07, (byte) 0xA0, 0x05, 0x30, 0x3, (byte) 0x80, 0x01,
