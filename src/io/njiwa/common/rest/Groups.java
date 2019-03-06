@@ -8,17 +8,16 @@
  * 
  * This program is free software, distributed under the terms of
  * the GNU General Public License.
- */ 
+ */
 
 package io.njiwa.common.rest;
 
 import io.njiwa.common.PersistenceUtility;
 import io.njiwa.common.Utils;
 import io.njiwa.common.model.Group;
+import io.njiwa.common.rest.annotations.RestRoles;
 import io.njiwa.common.rest.types.Roles;
 
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -41,7 +40,7 @@ public class Groups {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/get/{id}")
-    @RolesAllowed(Roles.USER)
+    @RestRoles(Roles.USER)
     public Group get(@PathParam("id") Long id) {
         return em.find(Group.class, id);
     }
@@ -49,7 +48,7 @@ public class Groups {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/delete/{id}")
-    @RolesAllowed({Roles.SMDPAdmin,Roles.SMSRAdmin})
+    @RestRoles({Roles.SMDPAdmin, Roles.SMSRAdmin})
     public Boolean delete(@PathParam("id") long id) {
 
         Boolean res = po.doTransaction(new PersistenceUtility.Runner<Boolean>() {
@@ -72,7 +71,7 @@ public class Groups {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/all")
-    @PermitAll
+    @RestRoles({Roles.ALLOWALL})
     public List<Group> all() {
         return em.createQuery("from Group", Group.class)
                 .getResultList();
@@ -81,7 +80,7 @@ public class Groups {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/update")
-    @RolesAllowed({Roles.SMDPAdmin,Roles.SMSRAdmin})
+    @RestRoles({Roles.SMDPAdmin, Roles.SMSRAdmin})
     public Boolean update(Group group) {
         Boolean res = po.doTransaction(new PersistenceUtility.Runner<Boolean>() {
             @Override

@@ -8,18 +8,18 @@
  * 
  * This program is free software, distributed under the terms of
  * the GNU General Public License.
- */ 
+ */
 
 package io.njiwa.common.rest;
 
 import io.njiwa.common.Properties;
 import io.njiwa.common.StatsCollector;
 import io.njiwa.common.model.RpaEntity;
+import io.njiwa.common.rest.annotations.RestRoles;
 import io.njiwa.common.rest.types.*;
 import io.njiwa.sr.model.Eis;
 import io.njiwa.sr.transports.Transport;
 
-import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
@@ -37,7 +37,7 @@ import java.util.Set;
  * Created by bagyenda on 05/06/2017.
  */
 @Path("/operations/reports")
-@RolesAllowed({Roles.REPORTS,Roles.SMSRAdmin,Roles.SMDPAdmin})
+@RestRoles({Roles.REPORTS, Roles.SMSRAdmin, Roles.SMDPAdmin})
 public class Reports {
     static final Set<String> allowedEisOutputFields = new HashSet<>(Arrays.asList("meid",
             "eid",

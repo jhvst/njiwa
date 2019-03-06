@@ -12,7 +12,6 @@
 
 package io.njiwa.common.rest.auth;
 
-import io.njiwa.common.Utils;
 import io.njiwa.common.model.Group;
 import io.njiwa.common.rest.types.RestResponse;
 import io.njiwa.common.rest.types.Roles;
@@ -27,7 +26,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;

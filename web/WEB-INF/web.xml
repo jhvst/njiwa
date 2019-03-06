@@ -42,11 +42,6 @@
             <http-method>PUT</http-method>
             <http-method>DELETE</http-method>
         </web-resource-collection>
-        <auth-constraint>
-            <description>Require Logon</description>
-            <role-name>*</role-name>
-        </auth-constraint>
-
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
