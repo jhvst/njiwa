@@ -13,7 +13,7 @@
 package io.njiwa.sr.transports;
 
 import io.njiwa.common.PersistenceUtility;
-import io.njiwa.common.Properties;
+import io.njiwa.common.ServerSettings;
 import io.njiwa.common.Utils;
 import io.njiwa.sr.Session;
 import io.njiwa.sr.model.DlrTracker;
@@ -264,7 +264,7 @@ public abstract class Transport {
 
         Eis sim = gwSession.getEuicc();
         porDlr |= (porDlr << 8); // Keep it in higher octet as well, for later.
-        if (Properties.isAlwaysUseDlr())
+        if (ServerSettings.isAlwaysUseDlr())
             porDlr |= Transport.DLR_ALL;
         // Try and make the package
         byte[] pkg;
@@ -345,7 +345,7 @@ public abstract class Transport {
         int numOpenRequests = type == TransportType.BIP ?  sim.getNumPendingBipRequests() : sim
                 .getNumPendingRAMRequests(); // Only RAM or
         // BIP for now. Right?
-        String[] a = Utils.execCommand(Properties.getHlr_gateway_command(), new String[]{sim.activeMISDN()}, new String[]
+        String[] a = Utils.execCommand(ServerSettings.getHlr_gateway_command(), new String[]{sim.activeMISDN()}, new String[]
                 {"1"}); // Default to YES
         String res = a[0];
         int x = Integer.parseInt(res);
@@ -355,11 +355,11 @@ public abstract class Transport {
             sim.setHasDataPlan(hasDataPlan);
             if (type == TransportType.BIP) {
 
-                if (numOpenRequests >= Properties.getMax_bip_send_requests())
+                if (numOpenRequests >= ServerSettings.getMax_bip_send_requests())
                     sim.setNumPendingBipRequests(0);
             } else {
                 //  boolean cScws = sim.getProfile().getCardType().getScws_support();
-                if (numOpenRequests >= Properties.getScWsNumberOfRetries())
+                if (numOpenRequests >= ServerSettings.getScWsNumberOfRetries())
                     sim.setNumPendingRAMRequests(0); // Reset it.
             }
             sim.setLastDataPlanFetch(Calendar.getInstance().getTime());

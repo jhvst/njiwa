@@ -12,6 +12,9 @@
 
 package io.njiwa.common;
 
+import io.njiwa.common.model.ServerConfigurations;
+
+import javax.persistence.EntityManager;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -22,16 +25,16 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @brief This is the  configurations handler class. All configurations are loaded once at startup.
  */
-public class Properties {
+public class ServerSettings {
 
-    public static final String BASE_DEPLOYMENT_URI = "base_deployment_uri";
+    public static final String BASEDEPLOYMENTURI = "base_deployment_uri";
     // Conf var names
-    private static final String MYHOSTNAME = "myhostname";
+    private static final String MYHOSTNAME = "hostname";
     private static final String MYPORT = "myport";
-    private static final String MAXIMUM_BATCH_QUEUE_SIZE = "maximum_batch_queue_size";
-    private static final String MAX_THREADS = "max_threads";
+    private static final String MAXBATCHQSIZE = "maximum_batch_queue_size";
+    private static final String MAXTHREADS = "max_threads";
 
-    private static final String QUEUE_RUN_INTERVAL = "queue_run_interval";
+    private static final String QUEUERUNINTVL = "queue_run_interval";
     private static final String REDIS_SERVER_HOST = "redis_server_host";
     private static final String REDIS_SERVER_PORT = "redis_server_port";
 
@@ -93,10 +96,10 @@ public class Properties {
         {
             put(MYHOSTNAME, new BaseValidator("localhost"));
             put(MYPORT, new IntegerValuesValidator(8080));
-            put(MAXIMUM_BATCH_QUEUE_SIZE, new IntegerValuesValidator(10));
-            put(MAX_THREADS, new IntegerValuesValidator(1));
+            put(MAXBATCHQSIZE, new IntegerValuesValidator(10));
+            put(MAXTHREADS, new IntegerValuesValidator(1));
 
-            put(QUEUE_RUN_INTERVAL, new RealValuesValidator(10)); // In seconds
+            put(QUEUERUNINTVL, new RealValuesValidator(10)); // In seconds
             put(REDIS_SERVER_HOST, new BaseValidator("localhost"));
             put(REDIS_SERVER_PORT, new IntegerValuesValidator(6379));
 
@@ -136,7 +139,7 @@ public class Properties {
 
             put(USE_SSL, new BooleanValidator(false));
 
-            put(BASE_DEPLOYMENT_URI, new BaseValidator("/dstk"));
+            put(BASEDEPLOYMENTURI, new BaseValidator("/dstk"));
 
             put(SENDSMS_URL, new BaseValidator("http://localhost:13013/cgi-bin/sendsms?username=tester&password=foobar"));
 
@@ -209,7 +212,8 @@ public class Properties {
             put(STATS_INTERVALS, new PositiveIntegerListValidator(new int[]{5, 30, 60, 3600}));
         }
     };
-    private static Map<String, Object> propertyValues = validateProps(loadProps()); // Validate them.
+
+    private static Map<String, Object> propertyValues = validateProps(null); // Load initial with nothing
 
 
     public static int[] getStatsIntervals() {
@@ -237,11 +241,11 @@ public class Properties {
     }
 
     public static int getNumThreads() {
-        return (Integer) propertyValues.get(MAX_THREADS);
+        return (Integer) propertyValues.get(MAXTHREADS);
     }
 
-    public static double getQueueRunInterval() {
-        return (Double) propertyValues.get(QUEUE_RUN_INTERVAL);
+    public static double getQueuerunintvl() {
+        return (Double) propertyValues.get(QUEUERUNINTVL);
     }
 
     public static String getRedis_server() {
@@ -307,7 +311,7 @@ public class Properties {
 
     public static String getDlrUri() {
         // return (String) propertyValues.get(DLR_URI);
-        return propertyValues.get(BASE_DEPLOYMENT_URI) + "/" + Constants.DLR_URI;
+        return propertyValues.get(BASEDEPLOYMENTURI) + "/" + Constants.DLR_URI;
     }
 
 
@@ -408,26 +412,19 @@ public class Properties {
         return (Integer) propertyValues.get(RAM_ADMIN_MAX_HTTP_REQUESTS_PER_SESSION);
     }
 
-    private static java.util.Properties loadProps() {
-        java.util.Properties p = new java.util.Properties();
-        // ClassLoader loader = Properties.class.getClassLoader();
+    /* Load the system properties from the db */
 
-        try {
-            InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(PFILE);
-            p.load(in);
-            Utils.lg.info(String.format("%s configs loaded", Constants.serverName));
-            return p;
-        } catch (Exception ex) {
-            Utils.lg.error(String.format("Failed to load application properties: %s", ex));
-        }
-        return null;
+    public static void loadProps(EntityManager em)
+    {
+        Map<String,String> m = ServerConfigurations.load(em);
+        propertyValues = validateProps(m);
     }
 
-    private static Map<String, Object> validateProps(java.util.Properties p) {
+    private static Map<String, Object> validateProps(Map<String,String> p) {
 
-        Set<Object> keys = p == null ? new HashSet<Object>() : p.keySet();
+        Set<String> keys = p == null ? new HashSet<>() : p.keySet();
 
-        Map<String, Object> vals = new ConcurrentHashMap<String, Object>();
+        Map<String, Object> vals = new ConcurrentHashMap<>();
         for (Object k : keys)
             try {
                 BaseValidator validator = configValidators.get(k);
@@ -440,7 +437,7 @@ public class Properties {
             } catch (Exception ex) {
             }
 
-        // Then deal with those that were not given.
+        // Then put in defaults
         Set<String> vkeys = configValidators.keySet();
         for (String k : vkeys)
 

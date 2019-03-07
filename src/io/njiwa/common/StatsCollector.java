@@ -53,7 +53,7 @@ public class StatsCollector {
     }
 
     public static Map<RpaEntity.Type, double[]> getTransactionStats() {
-        int[] intervals = Properties.getStatsIntervals();
+        int[] intervals = ServerSettings.getStatsIntervals();
         return new HashMap<RpaEntity.Type, double[]>() {
             {
                 put(RpaEntity.Type.SMDP, smdpTransactions.getFrequencies(intervals));
@@ -63,7 +63,7 @@ public class StatsCollector {
     }
 
     static {
-        maxEventSeconds = Properties.getMaxEventsHours() * 3600;
+        maxEventSeconds = ServerSettings.getMaxEventsHours() * 3600;
     }
 
     public static void recordOwnEvent(RpaEntity.Type ourType, EventType eventType) {
@@ -101,7 +101,7 @@ public class StatsCollector {
     }
 
     public static Map<EventType, double[]> getOurEventFrequencies(RpaEntity.Type ourType) {
-        int[] intervals = Properties.getStatsIntervals();
+        int[] intervals = ServerSettings.getStatsIntervals();
         if (ourType == RpaEntity.Type.SMDP)
             return smdp.getStats(intervals);
         else
@@ -109,7 +109,7 @@ public class StatsCollector {
     }
 
     public static Map<String, Map<EventType, double[]>> getOtherEntityFrequencyCounters() {
-        int[] intervals = Properties.getStatsIntervals();
+        int[] intervals = ServerSettings.getStatsIntervals();
         Map<String, Map<EventType, double[]>> map = new HashMap<>();
         for (Map.Entry<String, OtherRPACounters> e : entityCounters.entrySet()) {
             OtherRPACounters c = e.getValue();
@@ -125,7 +125,7 @@ public class StatsCollector {
     }
 
     public static Map<Transport.TransportType, Map<Transport.PacketType, double[]>> getTransportStats() {
-        int[] intervals = Properties.getStatsIntervals();
+        int[] intervals = ServerSettings.getStatsIntervals();
         return new HashMap<Transport.TransportType, Map<Transport.PacketType, double[]>>() {
             {
                 put(Transport.TransportType.SMS, transportEventsMap.get(Transport.TransportType.SMS).getStats(intervals));

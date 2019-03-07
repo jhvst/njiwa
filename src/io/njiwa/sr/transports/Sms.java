@@ -14,7 +14,7 @@ package io.njiwa.sr.transports;
 
 
 import io.njiwa.common.*;
-import io.njiwa.common.Properties;
+import io.njiwa.common.ServerSettings;
 import io.njiwa.sr.model.DlrTracker;
 import io.njiwa.sr.model.Eis;
 import io.njiwa.sr.ota.Ota;
@@ -105,7 +105,7 @@ public class Sms extends Transport {
         } else
             // We need to allocate a phone number
             for (int i = 0; i < 100000; i++) {
-                msisdn = String.format("%s%06d", Properties.getVsmscnumberPrefix(), i);
+                msisdn = String.format("%s%06d", ServerSettings.getVsmscnumberPrefix(), i);
                 VirtualDevice d = new VirtualDevice(msisdn, null);
                 if (devList.put(msisdn, d) == null) {
                     // We got one
@@ -118,7 +118,7 @@ public class Sms extends Transport {
 
     private static synchronized void startVsmsc() throws Exception {
         if (vsmsc_sock == null) {
-            vsmsc_sock = new ServerSocket(Properties.getVsmscPort());
+            vsmsc_sock = new ServerSocket(ServerSettings.getVsmscPort());
 
             receiver = new SmscReceiver();
             smscTh = new Thread(receiver);
@@ -165,7 +165,7 @@ public class Sms extends Transport {
         dev.lastUse = Calendar.getInstance().getTime();
 
         // Make the time
-        Utils.Pair<byte[], Integer> smsc = Utils.makePhoneNumber(Properties.getVsmsc_number().getBytes("UTF-8"));
+        Utils.Pair<byte[], Integer> smsc = Utils.makePhoneNumber(ServerSettings.getVsmsc_number().getBytes("UTF-8"));
 
         /* TP-UDHI: Page 36 of GSM 03.40 gives order */
         int h1 = (udh != null && udh.length > 0) ? (1 << 6) : 0;
@@ -253,8 +253,8 @@ public class Sms extends Transport {
         boolean res;
 
         String url = String.format("%s%stext=%s&to=%s",
-                Properties.getSendSmsUrl(),
-                Properties.getSendSmsUrl().contains("&") ? "&" : "?",
+                ServerSettings.getSendSmsUrl(),
+                ServerSettings.getSendSmsUrl().contains("&") ? "&" : "?",
                 Utils.urlEncode(text),
                 URLEncoder.encode(msidn, "UTF-8")
         );
@@ -339,10 +339,10 @@ public class Sms extends Transport {
     private String mkDlrUrl(Context context, int mask, long trackerId) throws Exception {
         // Return a kannel-style DLR url
         return String.format("http%s://%s:%d%s?from=%s&dlr=%%d&reqids=%s&data=%%b&dlr_tag=%s&dlr_id=%d&oflag=%d&sms_id=%d",
-                Properties.isUseSSL() ? "s" : "",
-                Properties.getMyhostname(),
-                Properties.getMyport(),
-                Properties.getDlrUri(),
+                ServerSettings.isUseSSL() ? "s" : "",
+                ServerSettings.getMyhostname(),
+                ServerSettings.getMyport(),
+                ServerSettings.getDlrUri(),
                 context.sim.activeMISDN(),
                 URLEncoder.encode(context.requestID, "UTF-8"),
                 context.tag,
@@ -465,9 +465,9 @@ public class Sms extends Transport {
                 byte[] text = Utils.byteArrayCopy(msg, offset, tSize);
                 offset += tSize; // Skip forward the amount read, or go past end of string.
 
-                if (Properties.getSmsThroughput() > 0 && i > 0)
+                if (ServerSettings.getSmsThroughput() > 0 && i > 0)
                     try {
-                        long millisecs = 1000 / Properties.getSmsThroughput();
+                        long millisecs = 1000 / ServerSettings.getSmsThroughput();
                         Thread.sleep(millisecs);
                     } catch (Exception ex) {
                     }
@@ -604,7 +604,7 @@ public class Sms extends Transport {
         public void run() {
             Socket socket, xsocket;
             DataOutputStream out = null;
-            Utils.lg.info(String.format("Starting virtual SMSC on port [%d]...", Properties.getVsmscPort()));
+            Utils.lg.info(String.format("Starting virtual SMSC on port [%d]...", ServerSettings.getVsmscPort()));
             // Run the receiver queue
             while (!stop)
                 try {
@@ -648,7 +648,7 @@ public class Sms extends Transport {
                                 l++;
                         } catch (Exception ex) {
                         }
-                        String r = String.format("SMSC: %d\r\n", Properties.getVsmscPort());
+                        String r = String.format("SMSC: %d\r\n", ServerSettings.getVsmscPort());
                         SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
                         Date dt = Calendar.getInstance().getTime();
 
@@ -845,7 +845,7 @@ public class Sms extends Transport {
                     }
                 }
 
-            Utils.lg.info(String.format("Stopped virtual SMSC on port [%d]", Properties.getVsmscPort()));
+            Utils.lg.info(String.format("Stopped virtual SMSC on port [%d]", ServerSettings.getVsmscPort()));
         }
     }
 

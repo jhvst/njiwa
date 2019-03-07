@@ -13,7 +13,7 @@
 package io.njiwa.sr;
 
 import io.njiwa.common.PersistenceUtility;
-import io.njiwa.common.Properties;
+import io.njiwa.common.ServerSettings;
 import io.njiwa.common.Utils;
 import io.njiwa.sr.transports.Transport;
 
@@ -41,7 +41,7 @@ import java.util.Map;
  * <p/>
  * It passes the DLR to the transports module for processing
  */
-@WebServlet(name = "DlrReceiver",urlPatterns = {Properties.Constants.DLR_URI, "/dlrHandler"})
+@WebServlet(name = "DlrReceiver",urlPatterns = {ServerSettings.Constants.DLR_URI, "/dlrHandler"})
 public class DlrReceiver extends HttpServlet {
      private static final long serialVersionUID = 1L;
    // Inject a persistence util.

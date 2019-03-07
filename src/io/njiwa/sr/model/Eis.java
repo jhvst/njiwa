@@ -17,7 +17,7 @@ import io.njiwa.common.Utils;
 import io.njiwa.common.model.Certificate;
 import io.njiwa.common.model.KeySet;
 import io.njiwa.common.model.TransactionType;
-import io.njiwa.common.Properties;
+import io.njiwa.common.ServerSettings;
 
 import javax.persistence.*;
 import javax.xml.bind.DatatypeConverter;
@@ -897,7 +897,7 @@ public class Eis {
                 Long requestingEntity = transactionType.requestingEntityId;
                 NotificationMessage.HandleNotificationConfirmationTransaction obj = new NotificationMessage
                         .HandleNotificationConfirmationTransaction(cT, msg.sequenceNumber, requestingEntity);
-                t = new SmSrTransaction(em, "NotificationConfirmation", "", null, this.getEid(), Properties.Constants
+                t = new SmSrTransaction(em, "NotificationConfirmation", "", null, this.getEid(), ServerSettings.Constants
                         .DEFAULT_VALIDITY, false, obj);
                 em.persist(t); // Send it to DB
                 return t;

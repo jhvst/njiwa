@@ -12,7 +12,7 @@
 
 package io.njiwa.sr.ota;
 
-import io.njiwa.common.Properties;
+import io.njiwa.common.ServerSettings;
 import io.njiwa.common.SDCommand;
 import io.njiwa.common.StatsCollector;
 import io.njiwa.common.Utils;
@@ -341,8 +341,8 @@ public class Ota {
             counter) throws
             Exception {
 
-        int spi1 = Properties.getDefault_ota_spi1();
-        int spi2 = Properties.getDefault_ota_spi2();
+        int spi1 = ServerSettings.getDefault_ota_spi1();
+        int spi2 = ServerSettings.getDefault_ota_spi2();
         boolean hasEnc = spiHasEncryption(spi1);
         boolean hasCrc = spiHasCryptoCrc(spi1);
 
@@ -1053,8 +1053,8 @@ public class Ota {
         public ProfileInfo profile = null; //!< Or the targetted profile
         public int kicKeyNum = -1; //!< The kIC index
         public int kidKeyNum = -1; //!< The KID index
-        public int spi1 = Properties.getDefault_ota_spi1(); //!< The current SPI1
-        public int spi2 = Properties.getDefault_ota_spi2(); //!< The current SPI2
+        public int spi1 = ServerSettings.getDefault_ota_spi1(); //!< The current SPI1
+        public int spi2 = ServerSettings.getDefault_ota_spi2(); //!< The current SPI2
         public boolean forcedSpi1 = false; //!< Whether SPI1 is forced or derived from the KIC/KID
         public boolean forcedSpi2 = false; //!< Whether SPI2 is forced, or derived from configurations
         public int numApdus = 0; //!< The number of command APDUs created/added so far.
@@ -1102,9 +1102,9 @@ public class Ota {
                 kicKeyNum = (o = params.get("kic")) != null && !Utils.isEmpty(o) ? (int) Utils.toLong(o) : -1;
                 kidKeyNum = (o = params.get("kid")) != null && !Utils.isEmpty(o) ? (int) Utils.toLong(o) : -1;
                 spi1 = (o = params.get("spi1")) != null && !Utils.isEmpty(o) ?
-                        (int) Utils.toLong(o) : Properties.getDefault_ota_spi1();
+                        (int) Utils.toLong(o) : ServerSettings.getDefault_ota_spi1();
                 forcedSpi1 = !Utils.isEmpty(o); // Track whether it was forced
-                spi2 = (o = params.get("spi2")) != null && !Utils.isEmpty(o) ? (int) Utils.toLong(o) : Properties.getDefault_ota_spi2();
+                spi2 = (o = params.get("spi2")) != null && !Utils.isEmpty(o) ? (int) Utils.toLong(o) : ServerSettings.getDefault_ota_spi2();
                 forcedSpi2 = !Utils.isEmpty(o); // Track whether it was forced
                 // Get the TAR from the application if set
                 if ((o = params.get("tar")) != null) // TAR takes precedence

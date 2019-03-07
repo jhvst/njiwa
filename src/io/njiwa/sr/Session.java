@@ -13,7 +13,7 @@
 package io.njiwa.sr;
 
 import io.njiwa.common.Utils;
-import io.njiwa.common.Properties;
+import io.njiwa.common.ServerSettings;
 import io.njiwa.sr.model.Eis;
 import io.njiwa.sr.transports.Transport;
 
@@ -118,7 +118,7 @@ public class Session {
    }
 
     public String getBrowserProfileStr() {
-        return Properties.Constants.serverName;
+        return ServerSettings.Constants.serverName;
     }
 
     public List<Utils.HTTPCookie> getCookies(String host, String url) {

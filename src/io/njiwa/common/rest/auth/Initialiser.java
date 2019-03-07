@@ -1,6 +1,7 @@
 package io.njiwa.common.rest.auth;
 
 import io.njiwa.common.PersistenceUtility;
+import io.njiwa.common.ServerSettings;
 import io.njiwa.common.model.Group;
 import io.njiwa.common.rest.types.Roles;
 import org.picketlink.idm.IdentityManager;
@@ -11,6 +12,8 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.ws.rs.POST;
 import java.util.HashSet;
 
 @Singleton
@@ -20,12 +23,14 @@ public class Initialiser {
 
     @Inject
     PersistenceUtility po;
+    @Inject
+    EntityManager em;
 
     @Inject
     private PartitionManager partitionManager;
 
     // Create users
-    @PostConstruct
+
     public void createUsers() {
 
         try {
@@ -44,6 +49,14 @@ public class Initialiser {
         } catch (Exception ex) {
         } // Ignore error
 
+    }
+
+    @PostConstruct
+    public void initFn() {
+        try {
+            ServerSettings.loadProps(em); // load server settings
+        } catch (Exception ex) {}
+        createUsers();
     }
 
     private void createUser(String admin, final String defaultAdminGroup) {

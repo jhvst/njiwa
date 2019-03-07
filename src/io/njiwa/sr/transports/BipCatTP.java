@@ -13,7 +13,7 @@
 package io.njiwa.sr.transports;
 
 import io.njiwa.common.*;
-import io.njiwa.common.Properties;
+import io.njiwa.common.ServerSettings;
 import io.njiwa.sr.SmSrTransactionsPeriodicProcessor;
 import io.njiwa.sr.model.Eis;
 import io.njiwa.sr.model.SecurityDomain;
@@ -103,7 +103,7 @@ public class BipCatTP extends Transport {
      */
     private static void makePushCmd1() throws Exception {
         if (pushCmd1 == null) {
-            byte[] tlvs = makeOpenChannelTLVs(Properties.getCat_tp_port(), OPEN_CHANNEL_UDP_CLIENT_MODE);
+            byte[] tlvs = makeOpenChannelTLVs(ServerSettings.getCat_tp_port(), OPEN_CHANNEL_UDP_CLIENT_MODE);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             os.write(new byte[]{
                     (byte) 0x80,
@@ -130,7 +130,7 @@ public class BipCatTP extends Transport {
         byte[] x;
         try {
             // Write the alpha ID
-            x = Charset.alphaConvert(Properties.getBip_title());
+            x = Charset.alphaConvert(ServerSettings.getBip_title());
             os.write(new byte[]{
                     (byte) 0x05,
                     (byte) (x.length & 0xFF)
@@ -147,13 +147,13 @@ public class BipCatTP extends Transport {
         os.write(new byte[]{
                 0x39,
                 0x02,
-                (byte) ((Properties.getBip_me_buffer_size() >> 8) & 0xFF),
-                (byte) (Properties.getBip_me_buffer_size() & 0xFF),
+                (byte) ((ServerSettings.getBip_me_buffer_size() >> 8) & 0xFF),
+                (byte) (ServerSettings.getBip_me_buffer_size() & 0xFF),
         });
 
         // Write APN
 
-        byte[] x_apn = Properties.getBip_apn();
+        byte[] x_apn = ServerSettings.getBip_apn();
         os.write(new byte[]{
                 0x47,
                 (byte) (x_apn.length & 0xFF),
@@ -173,7 +173,7 @@ public class BipCatTP extends Transport {
         });
 
         // Destination address, network byte order.
-        int addrLen = Properties.getBip_network_interface().length; // IPv6 or 4?
+        int addrLen = ServerSettings.getBip_network_interface().length; // IPv6 or 4?
         int addrType = addrLen == 4 ? 0x21 : 0x57;
 
         os.write(new byte[]{
@@ -182,7 +182,7 @@ public class BipCatTP extends Transport {
                 (byte) addrType,
 
         });
-        os.write(Properties.getBip_network_interface());
+        os.write(ServerSettings.getBip_network_interface());
 
         return os.toByteArray();
     }
@@ -225,8 +225,8 @@ public class BipCatTP extends Transport {
                 0x03,
                 0x00,
 
-                (byte) ((Properties.getCat_tp_port() >> 8) & 0xFF),
-                (byte) (Properties.getCat_tp_port() & 0xFF)
+                (byte) ((ServerSettings.getCat_tp_port() >> 8) & 0xFF),
+                (byte) (ServerSettings.getCat_tp_port() & 0xFF)
         });
 
         os.write(new byte[]{
@@ -292,10 +292,10 @@ public class BipCatTP extends Transport {
         // If it has BIP support, check when last fetched
         Date lastDplan = eis.getLastDataPlanFetch();
         Date tnow = Calendar.getInstance().getTime();
-        long ldiff = lastDplan == null ? Properties.getMax_bip_data_flag_cache_interval() + 100 : (tnow.getTime() - lastDplan.getTime()) / 1000;
+        long ldiff = lastDplan == null ? ServerSettings.getMax_bip_data_flag_cache_interval() + 100 : (tnow.getTime() - lastDplan.getTime()) / 1000;
         int numOpenRequests = eis.getNumPendingBipRequests();
         if (bipSupport &&
-                (!hasDataPlan || ldiff > Properties.getMax_bip_data_flag_cache_interval()))
+                (!hasDataPlan || ldiff > ServerSettings.getMax_bip_data_flag_cache_interval()))
             // Get the data plan flag
             hasDataPlan = checkAndUpdateSimDataFlag(eis, TransportType.BIP);
 
@@ -510,19 +510,19 @@ public class BipCatTP extends Transport {
             return;
         }
         // Start the cleanup threads
-        cleanupProcessor = new ScheduledThreadPoolExecutor(Properties.getNumThreads());
+        cleanupProcessor = new ScheduledThreadPoolExecutor(ServerSettings.getNumThreads());
         cleanupProcessor.setRemoveOnCancelPolicy(true);
-        notificationsProcessor = Executors.newFixedThreadPool(Properties.getNumThreads());
+        notificationsProcessor = Executors.newFixedThreadPool(ServerSettings.getNumThreads());
 
         cleanupProcessor.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 try {
-                    CatTP.Connection.clearIdle(Properties.getBip_idle_timeout());
+                    CatTP.Connection.clearIdle(ServerSettings.getBip_idle_timeout());
                 } catch (Exception ex) {
                 } // Ignore errors. Right?
             }
-        }, Properties.getBip_idle_timeout(), Properties.getBip_idle_timeout(), TimeUnit.SECONDS);
+        }, ServerSettings.getBip_idle_timeout(), ServerSettings.getBip_idle_timeout(), TimeUnit.SECONDS);
 
         started = BipStarted = true;
     }
@@ -628,7 +628,7 @@ public class BipCatTP extends Transport {
             CatTP.Connection connection = CatTP.Connection.getConnectionForMSISDN(sim.activeMISDN());
             // Check if max open is passed
             int numOpens = xres.k.getNumPendingBipRequests();
-            if (connection == null && numOpens > Properties.getMax_bip_send_requests()) {
+            if (connection == null && numOpens > ServerSettings.getMax_bip_send_requests()) {
                 updateSubscriberStatus(xres.k, false, false);
                 return null; // No BIP support.
             }
@@ -646,7 +646,7 @@ public class BipCatTP extends Transport {
                 // Force push if it's been a while, or if we were asked to.
                 ctx.forcePush = force ||
                         (lastOpen == null ||
-                                tnow - lastOpen.getTime() > numOpens * Properties.getBip_push_retry_timeout() * 1000);
+                                tnow - lastOpen.getTime() > numOpens * ServerSettings.getBip_push_retry_timeout() * 1000);
 
                 if (ctx.forcePush) {
                     // Massage the ota parameters
@@ -767,13 +767,13 @@ public class BipCatTP extends Transport {
             //  Sms smsT = new Sms();
             Utils.Triple<Integer, MessageStatus, Long> xres = smsT.sendMsg(em, context, msg, DLR_DELIVERED_TO_PHONE); // Message passed to us is already in coded form.
             MessageStatus status = xres.l == MessageStatus.Sent ? MessageStatus.BipPushSent : MessageStatus.BipWait;
-            long nextt = (1 + sim.getNumPendingBipRequests()) * Properties.getBip_push_retry_timeout(); // When to next try...
+            long nextt = (1 + sim.getNumPendingBipRequests()) * ServerSettings.getBip_push_retry_timeout(); // When to next try...
             return new Utils.Triple<>(xres.k, status, nextt);
         }
         if (connection == null || connection.isCloseRequested() ||
-                connection.outgoingSDUs.size() > Properties.getMax_bip_send_queue()) { // Buffer is full, or connection is closing, or no connection since we last came here
+                connection.outgoingSDUs.size() > ServerSettings.getMax_bip_send_queue()) { // Buffer is full, or connection is closing, or no connection since we last came here
             // Must wait a little
-            return new Utils.Triple<>(0, MessageStatus.BipWait, Properties.getBip_push_retry_timeout());
+            return new Utils.Triple<>(0, MessageStatus.BipWait, ServerSettings.getBip_push_retry_timeout());
         }
 
         // We have a BIP connection, queue the message and go
@@ -1080,7 +1080,7 @@ public class BipCatTP extends Transport {
                         public int action(Event evt) throws Exception {
                             RetransmitEvent revt = (RetransmitEvent) evt;
 
-                            if (revt.retries > Properties.getMaxRetries()) // Reset it
+                            if (revt.retries > ServerSettings.getMaxRetries()) // Reset it
                                 try {
                                     return conn_reset_f.action(evt);
                                 } catch (Exception ex) {
@@ -1598,10 +1598,10 @@ public class BipCatTP extends Transport {
             if (socket != null)
                 return;
             stopIt = false;
-            socket = new DatagramSocket(Properties.getCat_tp_port());
+            socket = new DatagramSocket(ServerSettings.getCat_tp_port());
 
             // Initialise the event Processors and event dispatcher
-            eventProcessor = Executors.newFixedThreadPool(Properties.getNumThreads()); // Make executors
+            eventProcessor = Executors.newFixedThreadPool(ServerSettings.getNumThreads()); // Make executors
             eventDispatcher = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -1631,7 +1631,7 @@ public class BipCatTP extends Transport {
             // The CATP socket receiver.
             socketThread = new Thread(() -> {
                 byte[] data = new byte[1024];
-                Utils.lg.info("CAT_TP UDP Socket server starting up on port [" + Properties.getCat_tp_port() + "]...");
+                Utils.lg.info("CAT_TP UDP Socket server starting up on port [" + ServerSettings.getCat_tp_port() + "]...");
                 while (!stopIt)
                     try {
                         DatagramPacket pkt = new DatagramPacket(data, data.length);

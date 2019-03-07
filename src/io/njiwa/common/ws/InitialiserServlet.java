@@ -24,18 +24,6 @@ import javax.servlet.http.HttpServlet;
 public class InitialiserServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    static {
-        // Initialise Resteasy
-
-        try {
-        /*    ResteasyProviderFactory instance = ResteasyProviderFactory.getInstance();
-            RegisterBuiltin.register(instance);
-            instance.registerProvider(ResteasyJacksonProvider.class); */
-        } catch (Exception ex) {
-            Utils.lg.warn("Error loading resteasy jackson provider: " + ex.getMessage());
-        }
-
-    }
 
     public void init(ServletConfig config) throws ServletException {
         // Get keystore param

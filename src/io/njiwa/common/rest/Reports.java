@@ -12,7 +12,7 @@
 
 package io.njiwa.common.rest;
 
-import io.njiwa.common.Properties;
+import io.njiwa.common.ServerSettings;
 import io.njiwa.common.StatsCollector;
 import io.njiwa.common.model.RpaEntity;
 import io.njiwa.common.rest.annotations.RestRoles;
@@ -112,7 +112,7 @@ public class Reports {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/frequency-intervals")
     public int[] getEventIntervals() {
-        return Properties.getStatsIntervals();
+        return ServerSettings.getStatsIntervals();
     }
 
     @GET

@@ -19,7 +19,7 @@ import io.njiwa.common.model.Key;
 import io.njiwa.common.model.KeyComponent;
 import io.njiwa.common.model.KeySet;
 import io.njiwa.common.model.TransactionType;
-import io.njiwa.common.Properties;
+import io.njiwa.common.ServerSettings;
 import io.njiwa.sr.Session;
 import io.njiwa.sr.model.Eis;
 import io.njiwa.sr.model.SecurityDomain;
@@ -71,7 +71,7 @@ import java.util.Map;
 public class RamHttp extends Transport {
     public static final String PROP_APDU_FORMAT_PARAM = "ram-http-proprietary-apdu-format";
     public static final String RAM_HTTP_ADMIN_AGENT_TAR = "B20100"; //!< RAM Admin Agent TAR value
-    public static final String DISPATCHER_URI = Properties.getRamPollingUri(); //!< The Dispatcher URL for HTTP over TLS
+    public static final String DISPATCHER_URI = ServerSettings.getRamPollingUri(); //!< The Dispatcher URL for HTTP over TLS
     public static final String DISPATCHER_RESULT_URI = "ramNext";
 
     public static final byte[] RAM_HTTP_ADMIN_AGENT_TAR_B;
@@ -161,12 +161,12 @@ public class RamHttp extends Transport {
             started = ramHttpStarted = true;
             String ipAddr;
             try {
-                ipAddr = InetAddress.getByAddress(Properties
+                ipAddr = InetAddress.getByAddress(ServerSettings
                         .getBip_network_interface()).toString();
             } catch (Exception ex) {
                 ipAddr = "127.0.0.1";
             }
-            int port = Properties.getRamhttpAdminPort();
+            int port = ServerSettings.getRamhttpAdminPort();
             Utils.lg.info(String.format("SCWS Admin startup complete: IP [%s], port = %s", ipAddr, port));
         } catch (Exception ex) {
             Utils.lg.error(String.format("RAM HTTP Admin startup failed: %s", ex));
@@ -197,17 +197,17 @@ public class RamHttp extends Transport {
         // If the sim has the web server, then check data plan and update
         Date lastDplan = sim.getLastDataPlanFetch();
         Date tnow = Calendar.getInstance().getTime();
-        long ldiff = (lastDplan == null) ? Properties.getMax_bip_data_flag_cache_interval() + 100 :
+        long ldiff = (lastDplan == null) ? ServerSettings.getMax_bip_data_flag_cache_interval() + 100 :
                 (tnow.getTime() - lastDplan.getTime()) / 1000;
         int numOpenRequests = sim.getNumPendingRAMRequests();
 
 
-        if (numOpenRequests > Properties.getRamMaxSendRequests()) {
+        if (numOpenRequests > ServerSettings.getRamMaxSendRequests()) {
             ramHttpSupport = false;
         } else {
             if (ramHttpSupport &&
                     (!hasDataPlan ||
-                            ldiff > Properties.getMax_bip_data_flag_cache_interval()))
+                            ldiff > ServerSettings.getMax_bip_data_flag_cache_interval()))
                 hasDataPlan = checkAndUpdateSimDataFlag(sim, TransportType.RAMHTTP);
         }
         // Smart cad web server support is NOT predicated on data support. You can still send commands using the simplified protocol (via SMS)
@@ -326,12 +326,12 @@ public class RamHttp extends Transport {
             Map<String, String> hdrs = xres.l;
             String ctype = xres.m;
 
-            int retryInterval = Properties.getRetryInterval();
+            int retryInterval = ServerSettings.getRetryInterval();
             int retries = bt.getRetries();
             int xretries = retries + 1;
             Date now = Calendar.getInstance().getTime();
             long tnow = now.getTime();
-            long secs = Properties.isGeometricBackOff() ? (retryInterval * xretries) : retryInterval;
+            long secs = ServerSettings.isGeometricBackOff() ? (retryInterval * xretries) : retryInterval;
             Date afterT = new Date(tnow + secs * 1000);
 
             // Update it as well
@@ -477,14 +477,14 @@ public class RamHttp extends Transport {
             // Have we seen a HTTP command recently and are being asked to use HTTP? If so, do not force push
             if (!ctx.useSms && !otaParams.forcePush &&
                     lastHttpCommand != null &&
-                    tnow - lastHttpCommand.getTime() < Properties.getRAMAdminHttpKeepAliveTimeOut())
+                    tnow - lastHttpCommand.getTime() < ServerSettings.getRAMAdminHttpKeepAliveTimeOut())
                 ctx.forcePush = false;
             else // We have no recent http fetchAFew and we need to push? Then do so.
                 ctx.forcePush = otaParams.forcePush = !ctx.useSms && // Only if not using SMS
                         (otaParams.forcePush ||
                                 (lastpushRequest == null ||
                                         tnow - lastpushRequest.getTime() >
-                                                numOpens * Properties.getRamPushRetryTimeOut() * 1000));
+                                                numOpens * ServerSettings.getRamPushRetryTimeOut() * 1000));
             if (ctx.forcePush) {
                 // Set the TAR value
                 SecurityDomain sd = sim.findISDR();
@@ -562,7 +562,7 @@ public class RamHttp extends Transport {
 
             if (ctx.forcePush) {
                 status = xres.l == MessageStatus.Sent ? MessageStatus.HttpPushSent : MessageStatus.HttpWait;
-                nextt = (1 + sim.getNumPendingRAMRequests()) * Properties.getRamPushRetryTimeOut();
+                nextt = (1 + sim.getNumPendingRAMRequests()) * ServerSettings.getRamPushRetryTimeOut();
             } else {
                 status = xres.l; // Transmit as received.
                 nextt = xres.m;
@@ -570,7 +570,7 @@ public class RamHttp extends Transport {
             return new Utils.Triple<>(xres.k, status, nextt);
         } else
             // Must wait a little for the HTTP Agent on the card to actively fetchAFewPending the message.
-            return new Utils.Triple<>(0, MessageStatus.HttpWait, Properties.getRamPushRetryTimeOut() * 1000L);
+            return new Utils.Triple<>(0, MessageStatus.HttpWait, ServerSettings.getRamPushRetryTimeOut() * 1000L);
     }
 
     /**
@@ -703,8 +703,8 @@ public class RamHttp extends Transport {
      */
     private class PskTlsAdminServer {
         Thread th = null; //!< The server execution thread
-        private int port = Properties.getRamhttpAdminPort(); //!< The server port from the configuration
-        private int backlog = Properties.getRamAdminBackLog(); //!< The server port back log
+        private int port = ServerSettings.getRamhttpAdminPort(); //!< The server port from the configuration
+        private int backlog = ServerSettings.getRamAdminBackLog(); //!< The server port back log
         private ServerSocket socket = null; //!< The server socket
 
         public void startUp() throws Exception {
@@ -802,7 +802,7 @@ public class RamHttp extends Transport {
                     final InputStream in = s.getInputStream();
                     final OutputStream out = s.getOutputStream();
 
-                    socket.setSoTimeout(HTTP_SOCKET_WAIT_FACTOR * Properties.getRAMAdminHttpKeepAliveTimeOut() * 1000);
+                    socket.setSoTimeout(HTTP_SOCKET_WAIT_FACTOR * ServerSettings.getRAMAdminHttpKeepAliveTimeOut() * 1000);
                     PersistenceUtility po = poTasks.get();
                     po.doTransaction(new PersistenceUtility.Runner<Object>() {
                         @Override
@@ -835,7 +835,7 @@ public class RamHttp extends Transport {
              */
             private void runHttpSession(EntityManager em, InputStream in, OutputStream out, Long simId) {
                 // Do the actual HTTP transactions
-                int maxReqs = Properties.getRAMAdminHttpMaxRequests();
+                int maxReqs = ServerSettings.getRAMAdminHttpMaxRequests();
                 int reqs = 0;
 
                 while (reqs < maxReqs)
@@ -1026,14 +1026,14 @@ public class RamHttp extends Transport {
          */
         private byte[] makeRAMHttpPushCommand(final Eis sim) throws Exception {
 
-            if (Properties.getRamUseDefaultConfig())
+            if (ServerSettings.getRamUseDefaultConfig())
                 return new byte[]{(byte) 0x81, 0x00};
 
             ByteArrayOutputStream xos = new ByteArrayOutputStream();
             ByteArrayOutputStream os = new ByteArrayOutputStream();
 
             // Make the connection params: Use the BIP parameters, same as with Push command in BIP code
-            byte[] connParams = BipCatTP.makeOpenChannelTLVs(Properties.getRamhttpAdminPort(), BipCatTP.OPEN_CHANNEL_TCP_CLIENT_MODE);
+            byte[] connParams = BipCatTP.makeOpenChannelTLVs(ServerSettings.getRamhttpAdminPort(), BipCatTP.OPEN_CHANNEL_TCP_CLIENT_MODE);
 
             // Security params
             // final boolean sendPskId = true; // Send PSK ID
@@ -1051,10 +1051,10 @@ public class RamHttp extends Transport {
             };
 
             // Retry policy
-            int xretries = Properties.getRamOpenChannelRetries(); // Same for RAM HTTP
+            int xretries = ServerSettings.getRamOpenChannelRetries(); // Same for RAM HTTP
 
             // Retry interval
-            int rinterval = Properties.getRamPushRetryTimeOut();
+            int rinterval = ServerSettings.getRamPushRetryTimeOut();
 
             ByteArrayOutputStream retry = new ByteArrayOutputStream();
             if (xretries > 0)

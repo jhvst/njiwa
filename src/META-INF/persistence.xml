@@ -12,22 +12,28 @@
         <class>io.njiwa.common.model.Key</class>
         <class>io.njiwa.common.model.KeySet</class>
         <class>io.njiwa.common.model.KeyComponent</class>
+        <class>io.njiwa.common.model.RpaEntity</class>
+        <class>io.njiwa.common.model.ServerConfigurations</class>
+        <class>io.njiwa.common.model.Group</class>
+
         <class>io.njiwa.sr.model.Pol2Rule</class>
         <class>io.njiwa.sr.model.ProfileInfo</class>
         <class>io.njiwa.sr.model.SecurityDomain</class>
         <class>io.njiwa.sr.model.SmSrTransaction</class>
         <class>io.njiwa.sr.model.SmSrTransactionRequestId</class>
         <class>io.njiwa.sr.model.DlrTracker</class>
-
-        <class>io.njiwa.common.model.RpaEntity</class>
         <class>io.njiwa.sr.model.AsyncWebServiceResponses</class>
+
+
+
+
 
         <class>io.njiwa.dp.model.ProfileData</class>
         <class>io.njiwa.dp.model.ProfileTemplate</class>
         <class>io.njiwa.dp.model.ISDP</class>
         <class>io.njiwa.dp.model.Euicc</class>
         <class>io.njiwa.dp.model.SmDpTransaction</class>
-        <class>io.njiwa.common.model.Group</class>
+
 
 
         <class>org.picketlink.idm.jpa.model.sample.simple.PartitionTypeEntity</class>

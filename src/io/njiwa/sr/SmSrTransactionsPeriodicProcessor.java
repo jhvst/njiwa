@@ -14,7 +14,7 @@ package io.njiwa.sr;
 
 import io.njiwa.common.model.TransactionType;
 import io.njiwa.common.GenericPeriodicProcessor;
-import io.njiwa.common.Properties;
+import io.njiwa.common.ServerSettings;
 import io.njiwa.common.Utils;
 import io.njiwa.sr.model.Eis;
 import io.njiwa.sr.model.SmSrTransaction;
@@ -130,8 +130,8 @@ public class SmSrTransactionsPeriodicProcessor extends GenericPeriodicProcessor<
                 return null;
             }
             SmSrBaseTransaction transObject = (SmSrBaseTransaction) t.getTransObject();
-            int maxRetries = Properties.getMaxRetries();
-            int retryInterval = Properties.getRetryInterval();
+            int maxRetries = ServerSettings.getMaxRetries();
+            int retryInterval = ServerSettings.getRetryInterval();
             int retries = t.getRetries();
             Date expiryDate = t.getExpires();
             Date tnow = Calendar.getInstance().getTime();
@@ -148,7 +148,7 @@ public class SmSrTransactionsPeriodicProcessor extends GenericPeriodicProcessor<
             long tnowSecs = tnow.getTime();
             // Now add seconds
             int xretries = retries + 1;
-            long secs = Properties.isGeometricBackOff() ? (retryInterval * xretries) : retryInterval;
+            long secs = ServerSettings.isGeometricBackOff() ? (retryInterval * xretries) : retryInterval;
             Date afterT = new Date(tnowSecs + secs * 1000);
 
             // Update it as well

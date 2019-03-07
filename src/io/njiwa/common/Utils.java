@@ -421,7 +421,7 @@ public class Utils {
         // Fixups
         if (req_hdr.get("User-Agent") == null) {
             String browser_ua = context != null ? context.getBrowserProfileStr() : null;
-            String ua = browser_ua != null ? browser_ua : String.format("eUICC Server v%s", Properties.Constants.version);
+            String ua = browser_ua != null ? browser_ua : String.format("eUICC Server v%s", ServerSettings.Constants.version);
             req_hdr.put("User-Agent", ua);
         }
 
@@ -614,9 +614,9 @@ public class Utils {
 
 
         if (!xx.equalsIgnoreCase(xnum)) { // Then there must be a country code
-            int ccLen = Properties.getCountry_code().length();
+            int ccLen = ServerSettings.getCountry_code().length();
             String mycc = xx.substring(0, ccLen);
-            if (!mycc.equalsIgnoreCase(Properties.getCountry_code()))
+            if (!mycc.equalsIgnoreCase(ServerSettings.getCountry_code()))
                 throw new Exception(String.format("Invalid country code [%s]", mycc));
             xnum = xx.substring(ccLen);
         } else if (xnum.charAt(0) == '0')
@@ -624,7 +624,7 @@ public class Utils {
 
         // Now we must have the number sans country code and any leading 0
         String network_code = null;
-        for (String nc : Properties.getNetwork_codes()) {
+        for (String nc : ServerSettings.getNetwork_codes()) {
             int ncLen = nc.length();
             String x = xnum.substring(0, ncLen);
 
@@ -637,10 +637,10 @@ public class Utils {
         if (network_code == null)
             throw new Exception(String.format("Invalid number: %s, network code is not one of the expected ones", num));
 
-        if (xnum.length() + 1 != Properties.getNumber_length())
-            throw new Exception(String.format("Invalid number: %s, must be %d digits long and of the form 0xxxxxx", num, Properties.getNumber_length()));
+        if (xnum.length() + 1 != ServerSettings.getNumber_length())
+            throw new Exception(String.format("Invalid number: %s, must be %d digits long and of the form 0xxxxxx", num, ServerSettings.getNumber_length()));
 
-        return "+" + Properties.getCountry_code() + xnum;
+        return "+" + ServerSettings.getCountry_code() + xnum;
     }
 
     public static void removeRecursively(Node node, short nodeType, String name) {
@@ -894,7 +894,7 @@ public class Utils {
     }
 
     public static Jedis redisConnect() {
-        return new Jedis(Properties.getRedis_server(), Properties.getRedis_port());
+        return new Jedis(ServerSettings.getRedis_server(), ServerSettings.getRedis_port());
     }
 
     public enum HttpRequestMethod {
