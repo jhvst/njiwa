@@ -86,7 +86,7 @@ public class InitialiserServlet extends HttpServlet {
             Utils.loadKeyStore(keyfile, keystorePass);
             Utils.lg.info("Initialised keystore and trust store locations");
 
-           outputKeyCerts();
+           // outputKeyCerts();
         } catch (Exception ex) {
             Utils.lg.error("Failed to initialise key store: " + ex.getMessage());
         }
