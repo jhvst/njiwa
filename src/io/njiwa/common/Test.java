@@ -25,10 +25,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -208,7 +205,7 @@ public class Test {
         certificate = (X509Certificate) Utils.getKeyStore().getCertificate("sm-sr");
 
         byte[] sig = ECKeyAgreementEG.genCertificateSignature(ciPkey, certificate, ECKeyAgreementEG
-                .SM_SR_DEFAULT_DISCRETIONARY_DATA, (byte) 0, iin);
+                .SM_SR_DEFAULT_DISCRETIONARY_DATA, (byte) 0, iin, ECKeyAgreementEG.DST_VERIFY_KEY_TYPE);
         RpaEntity sr = new RpaEntity(RpaEntity.Type.SMSR, "sm-sr-ws", "sm-sr",
                 "1.3.6.1.4.1.1234569.22", true, ECKeyAgreementEG.SM_SR_DEFAULT_DISCRETIONARY_DATA,
                 (byte) 00,
@@ -219,7 +216,7 @@ public class Test {
 
         certificate = (X509Certificate) Utils.getKeyStore().getCertificate("sm-dp");
         sig = ECKeyAgreementEG.genCertificateSignature(ciPkey, certificate, ECKeyAgreementEG
-                .SM_SR_DEFAULT_DISCRETIONARY_DATA, (byte) 0, iin);
+                .SM_SR_DEFAULT_DISCRETIONARY_DATA, (byte) 0, iin, ECKeyAgreementEG.DST_VERIFY_KEY_TYPE);
         RpaEntity dp = new RpaEntity(RpaEntity.Type.SMDP, "sm-dp-ws", "sm-dp",
                 "1.3.6.1.4.1.1234569.2", true, ECKeyAgreementEG.SM_DP_DEFAULT_DISCRETIONARY_DATA,
                 (byte) 00,
@@ -230,12 +227,15 @@ public class Test {
     }
 
 
+
     @PostConstruct
     public void atStart() {
         // Test DB
 
         try {
             //      bootstrapKeysDB();
+
+          //  outputKeyCerts();
         } catch (Exception ex) {
             String xs = ex.getMessage();
         }
@@ -256,6 +256,8 @@ public class Test {
                     String s;
 
                     try {
+                       // outputKeyCerts();
+
                         testEventsRecording(em);
                        // addUsersAndGroups(em);
                         //  testReportsQuery(em);

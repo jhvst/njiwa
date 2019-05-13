@@ -31,6 +31,8 @@ dependencies {
     providedCompile "javax.servlet:javax.servlet-api:4.0.1"
     providedCompile "javax.transaction:javax.transaction-api:1.3"
     providedCompile "javax.ws.rs:javax.ws.rs-api:2.1.1"
+    providedCompile "javax.xml.ws:jaxws-api:2.3.0"
+    providedCompile "javax.jws:javax.jws-api:1.1"
     compile "commons-net:commons-net:3.6"
     providedCompile "log4j:log4j:1.2.17"
 

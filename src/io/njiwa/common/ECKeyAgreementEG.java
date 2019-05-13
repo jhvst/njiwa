@@ -28,6 +28,10 @@ import java.util.Date;
  * Created by bagyenda on 07/12/2016.
  */
 public class ECKeyAgreementEG {
+
+    // Table 23 of SGP 02 v3.1
+    public static final byte[] EUM_DEFAULT_DISCRETIONARY_DATA = new byte[]{(byte) 0xC0};
+    public static final byte[] CI_DEFAULT_DISCRETIONARY_DATA = new byte[]{(byte) 0x00};
     // As per Table 76 of SGP 02 v3.1
     public static final byte[] SM_DP_DEFAULT_DISCRETIONARY_DATA = new byte[]{(byte) 0xC8, 0x01, 0x01};
     public static final byte[] SM_SR_DEFAULT_DISCRETIONARY_DATA = new byte[]{(byte) 0xC8, 0x01, 0x02};
@@ -36,6 +40,9 @@ public class ECKeyAgreementEG {
     public static final byte CERTIFICATE_VERIFICATION_PRECEDES = 0x8;
     public static final int KEY_QUAL_ONE_KEY = 0x5c;
     public static final int KEY_QUAL_THREE_KEYS = 0x10;
+
+    public static  final byte[] DST_VERIFY_KEY_TYPE = new byte[] {(byte)0x82};  // Table 11-17 of GPC
+    public static  final byte[] KEY_AGREEMENT_KEY_TYPE = new byte[] {0, (byte)0x80}; // Table 3-5 of GPC Ammend. E
 
     //1. To generate the ephemeral keys, we We follow this (except for the KDF bit): https://neilmadden.wordpress
     // .com/2016/05/20/ephemeral-elliptic-curve-diffie-hellman-key-agreement-in-java/
@@ -133,7 +140,7 @@ public class ECKeyAgreementEG {
         // Make the data: Table 76 of SGP v3.1
 
 
-        final byte[] sigdata = makeCertSigningData(cert, discretionaryData, keyParamRef, iin);
+        final byte[] sigdata = makeCertSigningData(cert, discretionaryData, keyParamRef, iin, KEY_AGREEMENT_KEY_TYPE);
 
         final byte[] certData = new ByteArrayOutputStream() {
             {
@@ -325,7 +332,8 @@ public class ECKeyAgreementEG {
     public static byte[] makeCertSigningData(final X509Certificate cert,
                                              byte[] discretionaryData,
                                              byte keyParamRef,
-                                             String iin) throws Exception {
+                                             String iin,
+                                              byte[] keyUsageQual) throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         // Table 77 of SGP 02 v3.1
         Utils.BER.appendTLV(os, (short) 0x93, cert.getSerialNumber().toByteArray());
@@ -334,9 +342,7 @@ public class ECKeyAgreementEG {
 
         byte[] subjectIdentifier = subject.getBytes("UTF-8");
         Utils.DGI.append(os, 0x5F20, subjectIdentifier);
-        Utils.BER.appendTLV(os, (byte) 0x95, new byte[]{
-                (byte) 0x82 // Table 3-4 of GPC Ammend. E
-        });
+        Utils.BER.appendTLV(os, (byte) 0x95, keyUsageQual);
         Date startDate = cert.getNotBefore();
         Date expDate = cert.getNotAfter();
         SimpleDateFormat df = new SimpleDateFormat("yyymmdd");
@@ -356,10 +362,10 @@ public class ECKeyAgreementEG {
     }
 
     public static byte[] genCertificateSignature(PrivateKey key, final X509Certificate cert, byte[]
-            discretionaryData, byte keyParamRef, String iin)
+            discretionaryData, byte keyParamRef, String iin, byte[] keyUsageQual)
             throws Exception {
         // Generate a certificate signature
-        byte[] os = makeCertSigningData(cert, discretionaryData, keyParamRef, iin);
+        byte[] os = makeCertSigningData(cert, discretionaryData, keyParamRef, iin, keyUsageQual);
         return genCertificateSignature(key, os);
     }
 
