@@ -909,7 +909,7 @@ public class Utils {
 
         public static void appendLen(OutputStream os, long len) throws Exception {
             // According to Appendix B of "GP System Scripting Language v1.1.0
-            if (len <= 255)
+            if (len < 255)
                 os.write((byte) len);
             else {
                 os.write(0xFF);
